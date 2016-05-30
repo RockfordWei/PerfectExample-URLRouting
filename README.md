@@ -11,7 +11,7 @@ Navigate in your web browser to [http://localhost:8181/](http://localhost:8181/)
 
 The following code is taken from the example project and shows how to enable the system and add routes.
 
-```
+```swift
 func addURLRoutes() {
     
     Routing.Routes[.Get, ["/", "index.html"] ] = indexHandler
@@ -36,7 +36,7 @@ func addURLRoutes() {
 
 The example `EchoHandler` consists of the following.
 
-```
+```swift
 func echoHandler(request: WebRequest, _ response: WebResponse) {
 	response.appendBody(string: "Echo handler: You accessed path \(request.requestURI!) with variables \(request.urlVariables)")
 	response.requestCompleted()
@@ -46,7 +46,7 @@ func echoHandler(request: WebRequest, _ response: WebResponse) {
 ## Using Apache
 The following Apache conf snippet can be used to pipe requests for non-existent files through to Perfect when using the URL routing system.
 
-```
+```apacheconf
 	RewriteEngine on
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
