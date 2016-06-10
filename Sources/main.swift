@@ -30,6 +30,6 @@ do {
     // Launch the HTTP server on port 8181
     try HTTPServer(documentRoot: "./webroot").start(port: 8181)
     
-} catch PerfectError.NetworkError(let err, let msg) {
+} catch PerfectError.networkError(let err, let msg) {
     print("Network error thrown: \(err) \(msg)")
 }
