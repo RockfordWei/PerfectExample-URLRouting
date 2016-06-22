@@ -23,7 +23,7 @@ func addURLRoutes() {
     
     // Test this one via command line with curl:
     // curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
-    Routing.Routes[.Post, "/raw"] = rawPOSTHandler
+    Routing.Routes[.post, "/raw"] = rawPOSTHandler
     
     // Trailing wildcard matches any path
     Routing.Routes["**"] = echo4Handler
