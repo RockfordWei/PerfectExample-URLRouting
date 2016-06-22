@@ -14,12 +14,12 @@ The following code is taken from the example project and shows how to enable the
 ```swift
 func addURLRoutes() {
     
-    Routing.Routes[.Get, ["/", "index.html"] ] = indexHandler
+    Routing.Routes[.get, ["/", "index.html"] ] = indexHandler
     Routing.Routes["/foo/*/baz"] = echoHandler
     Routing.Routes["/foo/bar/baz"] = echoHandler
-    Routing.Routes[.Get, "/user/{id}/baz"] = echo2Handler
-    Routing.Routes[.Get, "/user/{id}"] = echo2Handler
-    Routing.Routes[.Post, "/user/{id}/baz"] = echo3Handler
+    Routing.Routes[.get, "/user/{id}/baz"] = echo2Handler
+    Routing.Routes[.get, "/user/{id}"] = echo2Handler
+    Routing.Routes[.post, "/user/{id}/baz"] = echo3Handler
     
     // Test this one via command line with curl:
     // curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
