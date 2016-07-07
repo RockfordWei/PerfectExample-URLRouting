@@ -17,7 +17,7 @@
 //===----------------------------------------------------------------------===//
 //
 
-import PerfectLib
+import PerfectHTTP
 
 func addURLRoutes() {
     
@@ -48,34 +48,34 @@ public func PerfectServerModuleInit() {
 	addURLRoutes()
 }
 
-func indexHandler(request: WebRequest, _ response: WebResponse) {
-	response.appendBody(string: "Index handler: You accessed path \(request.requestURI!)")
-	response.requestCompleted()
+func indexHandler(request: HTTPRequest, _ response: HTTPResponse) {
+	response.appendBody(string: "Index handler: You accessed path \(request.path)")
+	response.completed()
 }
 
-func echoHandler(request: WebRequest, _ response: WebResponse) {
-	response.appendBody(string: "Echo handler: You accessed path \(request.requestURI!) with variables \(request.urlVariables)")
-	response.requestCompleted()
+func echoHandler(request: HTTPRequest, _ response: HTTPResponse) {
+	response.appendBody(string: "Echo handler: You accessed path \(request.path) with variables \(request.urlVariables)")
+	response.completed()
 }
 
-func echo2Handler(request: WebRequest, _ response: WebResponse) {
-	response.appendBody(string: "<html><body>Echo 2 handler: You GET accessed path \(request.requestURI!) with variables \(request.urlVariables)<br>")
+func echo2Handler(request: HTTPRequest, _ response: HTTPResponse) {
+	response.appendBody(string: "<html><body>Echo 2 handler: You GET accessed path \(request.path) with variables \(request.urlVariables)<br>")
 	response.appendBody(string: "<form method=\"POST\" action=\"/user/\(request.urlVariables["id"] ?? "error")/baz\"><button type=\"submit\">POST</button></form></body></html>")
-	response.requestCompleted()
+	response.completed()
 }
 
-func echo3Handler(request: WebRequest, _ response: WebResponse) {
-	response.appendBody(string: "<html><body>Echo 3 handler: You POSTED to path \(request.requestURI!) with variables \(request.urlVariables)</body></html>")
-	response.requestCompleted()
+func echo3Handler(request: HTTPRequest, _ response: HTTPResponse) {
+	response.appendBody(string: "<html><body>Echo 3 handler: You POSTED to path \(request.path) with variables \(request.urlVariables)</body></html>")
+	response.completed()
 }
 
-func echo4Handler(request: WebRequest, _ response: WebResponse) {
-    response.appendBody(string: "<html><body>Echo 4 (trailing wildcard) handler: You accessed path \(request.requestURI!)</body></html>")
-    response.requestCompleted()
+func echo4Handler(request: HTTPRequest, _ response: HTTPResponse) {
+    response.appendBody(string: "<html><body>Echo 4 (trailing wildcard) handler: You accessed path \(request.path)</body></html>")
+    response.completed()
 }
 
-func rawPOSTHandler(request: WebRequest, _ response: WebResponse) {
-	response.appendBody(string: "<html><body>Raw POST handler: You POSTED to path \(request.requestURI!) with content-type \(request.contentType) and POST body \(request.postBodyString)</body></html>")
-	response.requestCompleted()
+func rawPOSTHandler(request: HTTPRequest, _ response: HTTPResponse) {
+	response.appendBody(string: "<html><body>Raw POST handler: You POSTED to path \(request.path) with content-type \(request.header(.contentType)) and POST body \(request.postBodyString)</body></html>")
+	response.completed()
 }
 
