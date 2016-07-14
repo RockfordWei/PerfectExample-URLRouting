@@ -20,17 +20,19 @@
 import PerfectLib
 import PerfectHTTPServer
 
-// Initialize base-level services
-PerfectServer.initializeServices()
+// Create server object.
+let server = HTTPServer()
 
-// Add our routes and such
-addURLRoutes()
+// Listen on port 8181.
+server.serverPort = 8181
+
+// Add our routes.
+let routes = makeURLRoutes()
+server.addRoutes(routes)
 
 do {
-    
-    // Launch the HTTP server on port 8181
-    try HTTPServer(documentRoot: "./webroot").start(port: 8181)
-    
+    // Launch the HTTP server
+    try server.start()
 } catch PerfectError.networkError(let err, let msg) {
     print("Network error thrown: \(err) \(msg)")
 }

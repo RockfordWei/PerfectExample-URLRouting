@@ -19,33 +19,27 @@
 
 import PerfectHTTP
 
-func addURLRoutes() {
-    
-    Routing.Routes[.get, ["/", "index.html"] ] = indexHandler
-    Routing.Routes["/foo/*/baz"] = echoHandler
-    Routing.Routes["/foo/bar/baz"] = echoHandler
-    Routing.Routes[.get, "/user/{id}/baz"] = echo2Handler
-    Routing.Routes[.get, "/user/{id}"] = echo2Handler
-    Routing.Routes[.post, "/user/{id}/baz"] = echo3Handler
+func makeURLRoutes() -> Routes {
+	
+	var routes = Routes()
+	
+	routes.add(method: .get, uris: ["/", "index.html"], handler: indexHandler)
+	routes.add(method: .get, uri: "/foo/*/baz", handler: echoHandler)
+	routes.add(method: .get, uri: "/foo/bar/baz", handler: echoHandler)
+	routes.add(method: .get, uri: "/user/{id}/baz", handler: echo2Handler)
+	routes.add(method: .get, uri: "/user/{id}", handler: echo2Handler)
+	routes.add(method: .post, uri: "/user/{id}/baz", handler: echo3Handler)
     
     // Test this one via command line with curl:
     // curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
-    Routing.Routes[.post, "/raw"] = rawPOSTHandler
+	routes.add(method: .post, uri: "/raw", handler: rawPOSTHandler)
     
     // Trailing wildcard matches any path
-    Routing.Routes["**"] = echo4Handler
+	routes.add(method: .get, uri: "**", handler: echo4Handler)
     
     // Check the console to see the logical structure of what was installed.
-    print("\(Routing.Routes.description)")
-}
-
-// This is the function which all Perfect Server modules must expose.
-// The system will load the module and call this function.
-// In here, register any handlers or perform any one-time tasks.
-// This is not required when compiling as a stand alone executable, but having it lets us function in a multi-module environment.
-public func PerfectServerModuleInit() {
-	
-	addURLRoutes()
+    print("\(routes.navigator.description)")
+	return routes
 }
 
 func indexHandler(request: HTTPRequest, _ response: HTTPResponse) {
