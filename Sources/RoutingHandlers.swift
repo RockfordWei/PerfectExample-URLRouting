@@ -22,23 +22,23 @@ import PerfectHTTP
 func makeURLRoutes() -> Routes {
 	
 	var routes = Routes()
-	
+
 	routes.add(method: .get, uris: ["/", "index.html"], handler: indexHandler)
 	routes.add(method: .get, uri: "/foo/*/baz", handler: echoHandler)
 	routes.add(method: .get, uri: "/foo/bar/baz", handler: echoHandler)
 	routes.add(method: .get, uri: "/user/{id}/baz", handler: echo2Handler)
 	routes.add(method: .get, uri: "/user/{id}", handler: echo2Handler)
 	routes.add(method: .post, uri: "/user/{id}/baz", handler: echo3Handler)
-    
-    // Test this one via command line with curl:
-    // curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
+
+	// Test this one via command line with curl:
+	// curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
 	routes.add(method: .post, uri: "/raw", handler: rawPOSTHandler)
-    
-    // Trailing wildcard matches any path
+
+	// Trailing wildcard matches any path
 	routes.add(method: .get, uri: "**", handler: echo4Handler)
-	
+
 	// Routes with a base URI
-	
+
 	// Create routes for version 1 API
 	var api = Routes()
 	api.add(method: .get, uri: "/call1", handler: { _, response in
@@ -49,12 +49,12 @@ func makeURLRoutes() -> Routes {
 		response.setBody(string: "API CALL 2")
 		response.completed()
 	})
-	
+
 	// API version 1
 	var api1Routes = Routes(baseUri: "/v1")
 	// API version 2
 	var api2Routes = Routes(baseUri: "/v2")
-	
+
 	// Add the main API calls to version 1
 	api1Routes.add(routes: api)
 	// Add the main API calls to version 2
@@ -64,13 +64,13 @@ func makeURLRoutes() -> Routes {
 		response.setBody(string: "API v2 CALL 2")
 		response.completed()
 	})
-	
+
 	// Add both versions to the main server routes
 	routes.add(routes: api1Routes)
 	routes.add(routes: api2Routes)
-	
-    // Check the console to see the logical structure of what was installed.
-    print("\(routes.navigator.description)")
+
+	// Check the console to see the logical structure of what was installed.
+	print("\(routes.navigator.description)")
 	return routes
 }
 
