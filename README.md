@@ -5,11 +5,11 @@ To use the example with Swift Package Manager, type ```swift build``` and then r
 
 To use the example with Xcode, run the **URL Routing** target. This will launch the Perfect HTTP Server. 
 
-Navigate in your web browser to [http://localhost:8181/](http://localhost:8181/). Experiment with the URL routes wchich are added.
+Navigate in your web browser to [http://localhost:8181/](http://localhost:8181/). Experiment with the URL routes which are added.
 
 ## Enabling URL Routing
 
-The following code is taken from the example project and shows how to enable the system and add routes.
+The following code is taken from the example project and shows how to create and add routes to a server.
 
 ```swift
 var routes = Routes()
