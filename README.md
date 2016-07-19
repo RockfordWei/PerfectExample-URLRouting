@@ -12,24 +12,71 @@ Navigate in your web browser to [http://localhost:8181/](http://localhost:8181/)
 The following code is taken from the example project and shows how to enable the system and add routes.
 
 ```swift
-func addURLRoutes() {
-    
-    Routing.Routes[.get, ["/", "index.html"] ] = indexHandler
-    Routing.Routes["/foo/*/baz"] = echoHandler
-    Routing.Routes["/foo/bar/baz"] = echoHandler
-    Routing.Routes[.get, "/user/{id}/baz"] = echo2Handler
-    Routing.Routes[.get, "/user/{id}"] = echo2Handler
-    Routing.Routes[.post, "/user/{id}/baz"] = echo3Handler
-    
-    // Test this one via command line with curl:
-    // curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
-    Routing.Routes[.post, "/raw"] = rawPOSTHandler
-    
-    // Trailing wildcard matches any path
-    Routing.Routes["**"] = echo4Handler
-    
-    // Check the console to see the logical structure of what was installed.
-    print("\(Routing.Routes.description)")
+var routes = Routes()
+
+routes.add(method: .get, uris: ["/", "index.html"], handler: indexHandler)
+routes.add(method: .get, uri: "/foo/*/baz", handler: echoHandler)
+routes.add(method: .get, uri: "/foo/bar/baz", handler: echoHandler)
+routes.add(method: .get, uri: "/user/{id}/baz", handler: echo2Handler)
+routes.add(method: .get, uri: "/user/{id}", handler: echo2Handler)
+routes.add(method: .post, uri: "/user/{id}/baz", handler: echo3Handler)
+
+// Test this one via command line with curl:
+// curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
+routes.add(method: .post, uri: "/raw", handler: rawPOSTHandler)
+
+// Trailing wildcard matches any path
+routes.add(method: .get, uri: "**", handler: echo4Handler)
+
+// Routes with a base URI
+
+// Create routes for version 1 API
+var api = Routes()
+api.add(method: .get, uri: "/call1", handler: { _, response in
+	response.setBody(string: "API CALL 1")
+	response.completed()
+})
+api.add(method: .get, uri: "/call2", handler: { _, response in
+	response.setBody(string: "API CALL 2")
+	response.completed()
+})
+
+// API version 1
+var api1Routes = Routes(baseUri: "/v1")
+// API version 2
+var api2Routes = Routes(baseUri: "/v2")
+
+// Add the main API calls to version 1
+api1Routes.add(routes: api)
+// Add the main API calls to version 2
+api2Routes.add(routes: api)
+// Update the call2 API
+api2Routes.add(method: .get, uri: "/call2", handler: { _, response in
+	response.setBody(string: "API v2 CALL 2")
+	response.completed()
+})
+
+// Add both versions to the main server routes
+routes.add(routes: api1Routes)
+routes.add(routes: api2Routes)
+
+// Check the console to see the logical structure of what was installed.
+print("\(routes.navigator.description)")
+
+// Create server object.
+let server = HTTPServer()
+
+// Listen on port 8181.
+server.serverPort = 8181
+
+// Add our routes.
+server.addRoutes(routes)
+
+do {
+    // Launch the HTTP server
+    try server.start()
+} catch PerfectError.networkError(let err, let msg) {
+    print("Network error thrown: \(err) \(msg)")
 }
 ```
 ## Handling Requests
@@ -37,9 +84,9 @@ func addURLRoutes() {
 The example `EchoHandler` consists of the following.
 
 ```swift
-func echoHandler(request: WebRequest, _ response: WebResponse) {
-	response.appendBody(string: "Echo handler: You accessed path \(request.requestURI!) with variables \(request.urlVariables)")
-	response.requestCompleted()
+func echoHandler(request: HTTPRequest, _ response: HTTPResponse) {
+	response.appendBody(string: "Echo handler: You accessed path \(request.path) with variables \(request.urlVariables)")
+	response.completed()
 }
 ```
 
