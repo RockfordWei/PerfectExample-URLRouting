@@ -1,4 +1,4 @@
-# URL Routing [简体中文](README.zh_CN.md)
+# URL 路由
 
 <p align="center">
     <a href="http://perfect.org/get-involved.html" target="_blank">
@@ -18,7 +18,7 @@
     </a>  
     <a href="http://perfect.ly" target="_blank">
         <img src="http://www.perfect.org/github/Perfect_GH_button_4_slack.jpg" alt="Join the Perfect Slack" />
-    </a> 
+    </a>
 </p>
 
 <p align="center">
@@ -42,26 +42,26 @@
     </a>
 </p>
 
-This example illustrates how to set up URL routing to direct requests to your custom handlers.
+本程序展示了如何设置服务器URL路由并定向到您自己定义的路由句柄。
 
-To use the example with Swift Package Manager, type ```swift build``` and then run ``` .build/debug/URLRouting```.
+请使用 SPM 软件包管理器编译本工程，即在工程目录下执行命令 ```swift build``` 后运行 ``` .build/debug/URLRouting```。
 
-To use the example with Xcode, run the **URL Routing** target. This will launch the Perfect HTTP Server. 
+如果要使用 Xcode 编译，请将编译目标（target）设置为 **URL Routing** 。这样做可以启动 Perfect 服务器。
 
-Navigate in your web browser to [http://localhost:8181/](http://localhost:8181/). Experiment with the URL routes which are added.
+启动后请用浏览器查看 [http://localhost:8181/](http://localhost:8181/)以检查运行结果。您可以尝试自行增加不同的 URL 路由来试验效果。
 
-## Issues
+## 问题报告
 
-We are transitioning to using JIRA for all bugs and support related issues, therefore the GitHub issues has been disabled.
+目前我们已经把所有错误报告合并转移到了JIRA上，因此github原有的错误汇报功能不能用于本项目。
 
-If you find a mistake, bug, or any other helpful suggestion you'd like to make on the docs please head over to [http://jira.perfect.org:8080/servicedesk/customer/portal/1](http://jira.perfect.org:8080/servicedesk/customer/portal/1) and raise it.
+您的任何宝贵建意见或建议，或者发现我们的程序有问题，欢迎您在这里告诉我们。 [http://jira.perfect.org:8080/servicedesk/customer/portal/1](http://jira.perfect.org:8080/servicedesk/customer/portal/1)。
 
-A comprehensive list of open issues can be found at [http://jira.perfect.org:8080/projects/ISS/issues](http://jira.perfect.org:8080/projects/ISS/issues)
+目前问题清单请参考以下链接： [http://jira.perfect.org:8080/projects/ISS/issues](http://jira.perfect.org:8080/projects/ISS/issues)
 
 
-## Enabling URL Routing
+## 注册并登记 URL 路由
 
-The following code is taken from the example project and shows how to create and add routes to a server.
+以下代码是示例工程的程序片段，展示了如何向服务器创建并增加路由。
 
 ```swift
 var routes = Routes()
@@ -73,77 +73,77 @@ routes.add(method: .get, uri: "/user/{id}/baz", handler: echo2Handler)
 routes.add(method: .get, uri: "/user/{id}", handler: echo2Handler)
 routes.add(method: .post, uri: "/user/{id}/baz", handler: echo3Handler)
 
-// Test this one via command line with curl:
+// 如果用curl 可以用下面的命令行进行测试
 // curl --data "{\"id\":123}" http://0.0.0.0:8181/raw --header "Content-Type:application/json"
 routes.add(method: .post, uri: "/raw", handler: rawPOSTHandler)
 
-// Trailing wildcard matches any path
+// 使用通配符将剩下的其他的路由都统一到一个处理器句柄来管理
 routes.add(method: .get, uri: "**", handler: echo4Handler)
 
-// Routes with a base URI
+// 在基本 URI 上增加路由。
 
-// Create routes for version 1 API
+// 从版本 v1 的API上增加路由
 var api = Routes()
 api.add(method: .get, uri: "/call1", handler: { _, response in
-	response.setBody(string: "API CALL 1")
+	response.setBody(string: "API 调用 1")
 	response.completed()
 })
 api.add(method: .get, uri: "/call2", handler: { _, response in
-	response.setBody(string: "API CALL 2")
+	response.setBody(string: "API 调用 2")
 	response.completed()
 })
 
-// API version 1
+// API 版本 v1
 var api1Routes = Routes(baseUri: "/v1")
-// API version 2
+// API 版本 v2
 var api2Routes = Routes(baseUri: "/v2")
 
-// Add the main API calls to version 1
+// 为版本 v1 增加主调 API
 api1Routes.add(routes: api)
-// Add the main API calls to version 2
+// 为版本 v2 增加主调 API
 api2Routes.add(routes: api)
-// Update the call2 API
+// 更新第二个调用的API
 api2Routes.add(method: .get, uri: "/call2", handler: { _, response in
-	response.setBody(string: "API v2 CALL 2")
+	response.setBody(string: "API 版本 v2 调用 2")
 	response.completed()
 })
 
-// Add both versions to the main server routes
+// 将所有版本的路由都注册到服务器路由表上
 routes.add(routes: api1Routes)
 routes.add(routes: api2Routes)
 
-// Check the console to see the logical structure of what was installed.
+// 将路由表逻辑结构输出到终端控制台，查看上面的操作都注册了什么新内容
 print("\(routes.navigator.description)")
 
-// Create server object.
+// 创建服务器
 let server = HTTPServer()
 
-// Listen on port 8181.
+// 监听8181端口
 server.serverPort = 8181
 
-// Add our routes.
+// 将路由表保存到服务器
 server.addRoutes(routes)
 
 do {
-    // Launch the HTTP server
+    // 启动 HTTP 服务器
     try server.start()
 } catch PerfectError.networkError(let err, let msg) {
-    print("Network error thrown: \(err) \(msg)")
+    print("网络异常：\(err) \(msg)")
 }
 ```
-## Handling Requests
+## 处理响应
 
-The example `EchoHandler` consists of the following.
+示例 `EchoHandler` 还包含了以下代码。
 
 ```swift
 func echoHandler(request: HTTPRequest, _ response: HTTPResponse) {
-	response.appendBody(string: "Echo handler: You accessed path \(request.path) with variables \(request.urlVariables)")
+	response.appendBody(string: "“回声句柄” 您已经访问了路径 \(request.path) ，并包括以下变量： \(request.urlVariables)")
 	response.completed()
 }
 ```
 
-## Using Apache
-The following Apache conf snippet can be used to pipe requests for non-existent files through to Perfect when using the URL routing system.
+## 使用 Apache
+以下 Apache 配置文件的片段示范了如何将 HTTP 请求的、并不以静态文件方式存在的逻辑路由，将其HTTP的请求和响应重新定向到 Perfect服务器的 URL 路由上。
 
 ```apacheconf
 	RewriteEngine on
@@ -153,5 +153,5 @@ The following Apache conf snippet can be used to pipe requests for non-existent 
 ```
 
 
-## Further Information
-For more information on the Perfect project, please visit [perfect.org](http://perfect.org).
+## 更多内容
+关于 Perfect 工程的更多内容，请参考官网 [perfect.org](http://perfect.org).
